@@ -1,6 +1,11 @@
+/// <reference types="Cypress" />
+
 describe("Tasks management", () => {
-  it("should open the modal and closing it by clicking on the backdrop", () => {
+  beforeEach(() => {
     cy.visit("http://127.0.0.1:5173/");
+  });
+
+  it("should open the modal and closing it by clicking on the backdrop", () => {
     cy.contains("Add Task").click();
     cy.get(".modal").should('exist');
     /* Force true is necessary here since the click will dispatch on the center
@@ -11,7 +16,6 @@ describe("Tasks management", () => {
   });
 
   it("should open the modal and closing it by clicking on the cancel button", () => {
-    cy.visit("http://127.0.0.1:5173/");
     cy.contains("Add Task").click();
     cy.get(".modal").should('exist');
     cy.contains("Cancel").click();
@@ -19,7 +23,6 @@ describe("Tasks management", () => {
   });
 
   it('should show an error if the texts are empty', () => {
-    cy.visit("http://127.0.0.1:5173/");
     cy.contains("Add Task").click();
     cy.get('.actions').contains('Add Task').click();
     cy.get('.error-message').should('exist');
@@ -27,7 +30,6 @@ describe("Tasks management", () => {
   });
 
   it('should create a task', () => {
-    cy.visit("http://127.0.0.1:5173/");
     cy.contains("Add Task").click();
     cy.get('#title').type('First task');
     cy.get('#summary').type('Some description');
@@ -40,7 +42,6 @@ describe("Tasks management", () => {
   });
 
   it('should filter the tasks based on priority', () => {
-    cy.visit("http://127.0.0.1:5173/");
     cy.contains("Add Task").click();
     cy.get('#title').type('First task');
     cy.get('#summary').type('Some description');
@@ -53,5 +54,21 @@ describe("Tasks management", () => {
     cy.get('.task-list .task').should('have.length', 1);
     cy.get('#filter').select('all');
     cy.get('.task-list .task').should('have.length', 1);
+  });
+
+  it('should add multiple tasks', () => {
+    cy.contains("Add Task").click();
+    cy.get('#title').type('Task 1');
+    cy.get('#summary').type('First task');
+    cy.get('.actions').contains('Add Task').click();
+    cy.get('.task-list .task').should('have.length', 1);
+
+    cy.contains("Add Task").click();
+    cy.get('#title').type('Task 2');
+    cy.get('#summary').type('Second task');
+    cy.get('.actions').contains('Add Task').click();
+    cy.get('.task-list .task').should('have.length', 2);
+    cy.get('.task-list .task').eq(0).should('contain', 'First task');
+    cy.get('.task-list .task').eq(1).should('contain', 'Second task');
   });
 });
