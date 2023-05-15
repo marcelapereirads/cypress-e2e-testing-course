@@ -23,3 +23,19 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+Cypress.Commands.add('fillContactForm', () => {
+    cy.getByCyId('contact-input-message').type("Hello");
+    cy.getByCyId('contact-input-name').type("Marcela");
+    cy.getByCyId('contact-input-email').type(
+      "marcelapereirads@gmail.com"
+    );
+});
+
+Cypress.Commands.addQuery('getByCyId', (id) => {
+    const getIdFn = cy.now('get', `[data-cy="${id}"]`);
+
+    return () => {
+        return getIdFn();
+    }
+});
