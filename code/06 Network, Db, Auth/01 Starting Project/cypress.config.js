@@ -8,8 +8,11 @@ export default defineConfig({
     setupNodeEvents(on, config) {
       // implement node event listeners here
       on('task', {
+        // this code runs out of the browser
         async seedDatabase() {
           await seed();
+
+          // all the cy.tasks need to return a value
           return null;
         }
       })
