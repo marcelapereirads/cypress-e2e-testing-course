@@ -17,6 +17,7 @@ function TakewaysLayoutRoute() {
         <Link
           to="/takeaways/new"
           className="border-blue-300 px-4 py-3 border-2 text-blue-300 hover:bg-blue-300 hover:text-blue-900"
+          data-cy="add-takeaway"
         >
           + Add a new takeaway
         </Link>

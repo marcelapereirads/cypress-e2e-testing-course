@@ -3,6 +3,7 @@ import { defineConfig } from 'cypress';
 import { seed } from './prisma/seed-test';
 
 export default defineConfig({
+  defaultCommandTimeout: 5000,
   e2e: {
     baseUrl: 'http://localhost:3000',
     setupNodeEvents(on, config) {
@@ -12,7 +13,7 @@ export default defineConfig({
         async seedDatabase() {
           await seed();
 
-          // all the cy.tasks need to return a value
+          // all cy.tasks need to return a value
           return null;
         }
       })

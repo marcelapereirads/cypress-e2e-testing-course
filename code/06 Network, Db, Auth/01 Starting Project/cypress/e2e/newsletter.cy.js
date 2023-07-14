@@ -1,14 +1,41 @@
-/// <reference types="Cypress" />
+/// <reference types='Cypress' />
 
 describe('Newsletter', () => {
-    beforeEach(() => {
-        cy.task('seedDatabase');
-        cy.visit('/');
-    });
+  beforeEach(() => {
+    cy.task('seedDatabase');
+  });
 
-    it('should subscribe to the newsletter', () => {
-        cy.get('[data-cy="newsletter-email"]').type('marcela@test.com');
-        cy.get('[data-cy="newsletter-submit"]').click();
-        cy.contains('Thanks for signing up');
+  it('should subscribe to the newsletter', () => {
+    cy.intercept('POST', '/newsletter*', { status: 201 }).as('subscribe');
+    cy.visit('/');
+    cy.get('[data-cy="newsletter-email"]').type('marcela@test.com');
+    cy.get('[data-cy="newsletter-submit"]').click();
+
+    cy.wait('@subscribe');
+    cy.contains('Thanks for signing up!');
+  });
+
+  it('should display validation errors', () => {
+    cy.intercept('POST', '/newsletter*', {
+      status: 400,
+      message: 'Email exists already.',
+    }).as('subscribe');
+    cy.visit('/');
+    cy.get('[data-cy="newsletter-email"]').type('marcela@test.com');
+    cy.get('[data-cy="newsletter-submit"]').click();
+
+    cy.wait('@subscribe');
+    cy.contains('Email exists already.');
+  });
+
+  it('should successfully create a new contact', () => {
+    cy.request({
+      method: 'POST',
+      url: '/newsletter',
+      body: { email: 'marcela@test.com' },
+      form: true
+    }).then(res => {
+      expect(res.status).to.eq(201);
     });
+  });
 });
